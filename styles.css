@@ -1,0 +1,48 @@
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --lightBlue: #00bfff;
+  --red: #ff4c68;
+  --orange: #ef8172;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(300deg, var(--lightBlue), var(--orange), var(--red));
+  background-size: 180% 180%;
+  animation-name: background-animation;
+  animation-duration: 18s;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+  font-family: 'Montserrat', sans-serif;
+}
+
+@keyframes background-animation{
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+h1 {
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+p.warning {
+  color: var(--red);
+  font-weight: bold;
+  margin-top: 4px;
+}
