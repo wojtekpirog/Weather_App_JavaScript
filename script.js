@@ -1,30 +1,86 @@
-const input = document.querySelector("input");
-const button = document.querySelector("button");
-const photo = document.querySelector("img");
-const cityName = document.querySelector(".city-name");
-const warning = document.querySelector(".warning");
-const weather = document.querySelector(".weather-info > div:nth-child(1)");
-const temperature = document.querySelector(".weather-info > div:nth-child(2)");
-const humidity = document.querySelector(".weather-info > div:nth-child(3)");
+let input;
+let button;
+let photo;
+let cityName;
+let warning;
+let weather;
+let temperature;
+let humidity;
 
-// const API_COORDINATES = "http://api.openweathermap.org/geo/1.0/direct?q=";
 const API_LINK = "https://api.openweathermap.org/data/2.5/weather?q=";
 const API_KEY = "&appid=f6281811f04f09446c1a8be4d0223a47";
 const API_UNITS = "&units=metric";
 
-const getWeather = () => {
-  const cityName = input.value || "Wrocław";
-  const URL = API_LINK + cityName + API_KEY + API_UNITS;
-
-  axios.get(URL)
-    .then(res => {
-      console.log(res);
-      const temp = res.data.main.temp;
-      const weather = res.data.weather[0].description;
-      const humidity = res.data.main.humidity;
-
-      cityName.textContent = res.data.name;
-    })
+const main = () => {
+  prepareDOMElements();
+  prepareDOMEvents();
 }
 
-button.addEventListener("click", getWeather);
+const prepareDOMElements = () => {
+  input = document.querySelector("input");
+  button = document.querySelector("button");
+  photo = document.querySelector("img");
+  cityName = document.querySelector(".city-name");
+  warning = document.querySelector(".warning");
+  weather = document.querySelector(".weather-info > div:nth-child(1)");
+  temperature = document.querySelector(".weather-info > div:nth-child(2)");
+  humidity = document.querySelector(".weather-info > div:nth-child(3)");
+}
+
+const prepareDOMEvents = () => {
+  input.addEventListener("keydown", getWeatherOnEnterClick);
+  button.addEventListener("click", getWeather);
+}
+
+const getWeatherOnEnterClick = (e) => {
+  if (e.key === "Enter") getWeather();
+}
+
+const displayDetails = (response) => {
+  const status = Object.assign({}, ...response.data.weather);
+  
+  if (status.id >= 200 && status.id <= 232) {
+    photo.setAttribute("src", "./assets/images/thunderstorm.png");
+  } else if (status.id >= 300 && status.id <= 321) {
+    photo.setAttribute("src", "./assets/images/drizzle.png");
+  } else if (status.id >= 500 && status.id <= 531) {
+    photo.setAttribute("src", "./assets/images/rain.png");
+  } else if (status.id >= 600 && status.id <= 622) {
+    photo.setAttribute("src", "./assets/images/ice.png");
+  } else if (status.id === 701 || status.id === 741) {
+    photo.setAttribute("src", "./assets/images/fog.png");
+  } else if (status.id === 800) {
+    photo.setAttribute("src", "./assets/images/sun.png");
+  } else if (status.id > 800) {
+    photo.setAttribute("src", "./assets/images/cloud.png");
+  } else {
+    photo.setAttribute("src", "./assets/images/unknown.png");
+  }
+  
+  cityName.textContent = input.value;
+  weather.textContent = status.main;
+  temperature.textContent = Math.floor(response.data.main.temp) + " ºC";
+  humidity.textContent = response.data.main.humidity + " %"; 
+}
+
+const displayError = (error) => {
+  warning.textContent = "Podano niepoprawną nazwę miasta!";
+}
+
+const getWeather = () => {
+  if (input.value) {
+    const URL = API_LINK + input.value + API_KEY + API_UNITS;
+
+    axios.get(URL)
+      .then(response => {
+        displayDetails(response);
+        input.value = "";
+        warning.textContent = "";        
+      })
+      .catch(error => displayError(error));
+  } else {
+    warning.textContent = "Nie podano nazwy miasta!";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", main);

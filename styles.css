@@ -71,7 +71,6 @@ body {
 
 .headings, .weather-info {
   display: flex;
-  justify-content: space-evenly;
   align-items: center;
 }
 
@@ -88,11 +87,11 @@ body {
   font-size: 24px;
 }
 
-/* .headings > div,
+.headings > div,
 .weather-info > div {
   width: 33.3%;
   text-align: center;
-} */
+}
 
 .bottom {
   height: 140px;
